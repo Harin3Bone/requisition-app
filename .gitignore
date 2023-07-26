@@ -43,3 +43,4 @@ out/
 
 ## Unnecessary
 HELP.md
+.env
