@@ -1,1 +1,12 @@
+server:
+  port: 8080
 
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_NAME}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+requisition:
+  timezone: ${TIMEZONE}

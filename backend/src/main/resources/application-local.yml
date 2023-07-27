@@ -1,0 +1,3 @@
+logging:
+  level:
+    com.project.requisition: DEBUG
