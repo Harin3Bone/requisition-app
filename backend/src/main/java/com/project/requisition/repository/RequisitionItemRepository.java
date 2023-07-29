@@ -14,6 +14,9 @@ import java.util.UUID;
 public interface RequisitionItemRepository extends JpaRepository<RequisitionItemEntity, UUID> {
 
     List<RequisitionItemEntity> findByRequisitionId(UUID requisitionId);
+
+    List<RequisitionItemEntity> findByRequisitionIdIn(List<UUID> requisitionId);
+
     void deleteByRequisitionId(UUID requisitionId);
 
     @Modifying

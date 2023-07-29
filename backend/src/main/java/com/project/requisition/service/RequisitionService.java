@@ -2,8 +2,10 @@ package com.project.requisition.service;
 
 import com.project.requisition.constants.RequisitionStatus;
 import com.project.requisition.entity.RequisitionEntity;
+import com.project.requisition.entity.RequisitionItemEntity;
 import com.project.requisition.exception.NotFoundException;
 import com.project.requisition.model.request.RequisitionRequest;
+import com.project.requisition.model.response.RequisitionResponse;
 import com.project.requisition.repository.RequisitionRepository;
 import com.project.requisition.utils.CommonUtils;
 import com.project.requisition.utils.ValidateUtils;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,21 +32,41 @@ public class RequisitionService {
     private final RequisitionRepository requisitionRepository;
     private final Clock systemClock;
 
-    public List<RequisitionEntity> getAllRequisitions() {
-        return requisitionRepository.findAll();
+    public List<RequisitionResponse> getAllRequisitions() {
+        var requisitionList = new ArrayList<RequisitionResponse>();
+        var requisitionEntityList = requisitionRepository.findAll();
+
+        var requisitionIdList = requisitionEntityList.stream()
+                .map(RequisitionEntity::getRequisitionId)
+                .toList();
+        var itemMap = requisitionItemService.getRequisitionItemByRequisitionId(requisitionIdList);
+
+        for (var requisitionEntity : requisitionEntityList) {
+            var itemList = itemMap.get(requisitionEntity.getRequisitionId()) == null
+                    ? new ArrayList<RequisitionItemEntity>()
+                    : itemMap.get(requisitionEntity.getRequisitionId());
+            var requisitionResponse = new RequisitionResponse(requisitionEntity, itemList);
+            requisitionList.add(requisitionResponse);
+        }
+
+        return requisitionList;
     }
 
-    public RequisitionEntity getRequisitionById(String requisitionId) {
-        return requisitionRepository.findById(UUID.fromString(requisitionId))
+    public RequisitionResponse getRequisitionById(String uuid) {
+        var requisitionId = UUID.fromString(uuid);
+        var requisitionEntity = requisitionRepository.findById(requisitionId)
                 .orElseThrow(() -> {
                     var err = String.format(REQUISITION_NOT_FOUND, requisitionId);
                     log.error("getRequisitionById, {}", err);
                     return new NotFoundException(err);
                 });
+        var requisitionItem = requisitionItemService.getRequisitionItemByRequisitionId(requisitionId);
+
+        return new RequisitionResponse(requisitionEntity, requisitionItem);
     }
 
     @Transactional
-    public RequisitionEntity createNewRequisition(RequisitionRequest requisitionRequest) {
+    public RequisitionResponse createNewRequisition(RequisitionRequest requisitionRequest) {
         var requisitionId = UUID.randomUUID();
         var operatorId = UUID.fromString(requisitionRequest.lastOperatorId());
         var currentDateTime = ZonedDateTime.now(systemClock);
@@ -62,14 +85,14 @@ public class RequisitionService {
         requisitionEntity.setCreatedTimestamp(currentDateTime);
         requisitionEntity.setLastUpdatedTimestamp(currentDateTime);
 
-        requisitionRepository.save(requisitionEntity);
-        requisitionItemService.createRequisitionItem(requisitionId, operatorId, requisitionRequest.itemList(), currentDateTime);
+        var saveEntity = requisitionRepository.save(requisitionEntity);
+        var saveItemEntity = requisitionItemService.createRequisitionItem(requisitionId, operatorId, requisitionRequest.itemList(), currentDateTime);
 
-        return requisitionEntity;
+        return new RequisitionResponse(saveEntity, saveItemEntity);
     }
 
     @Transactional
-    public RequisitionEntity updateRequisition(String requisitionId, RequisitionRequest requisitionRequest) {
+    public RequisitionResponse updateRequisition(String requisitionId, RequisitionRequest requisitionRequest) {
         var currentDateTime = ZonedDateTime.now(systemClock);
         var requisitionEntity = requisitionRepository.findById(UUID.fromString(requisitionId))
                 .orElseThrow(() -> {
@@ -101,7 +124,7 @@ public class RequisitionService {
             requisitionItemService.patchRequisitionItem(requisitionEntity.getRequisitionId(), requisitionEntity.getLastOperatorId(), requisitionRequest.itemList(), currentDateTime);
         }
 
-        return requisitionEntity;
+        return getRequisitionById(requisitionId);
     }
 
     @Transactional

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -20,14 +22,34 @@ public class RequisitionItemService {
 
     private final RequisitionItemRepository requisitionItemRepository;
 
+    public List<RequisitionItemEntity> getRequisitionItemByRequisitionId(UUID requisitionId) {
+        return requisitionItemRepository.findByRequisitionId(requisitionId);
+    }
+
+    public Map<UUID, List<RequisitionItemEntity>> getRequisitionItemByRequisitionId(List<UUID> requisitionIdList) {
+        var requisitionItemMap = new HashMap<UUID, List<RequisitionItemEntity>>();
+        var requisitionItemEntityList = requisitionItemRepository.findByRequisitionIdIn(requisitionIdList);
+        for (var requisitionId : requisitionIdList) {
+            var requisitionItemById = requisitionItemEntityList.stream().filter(item -> item.getRequisitionId().equals(requisitionId)).toList();
+            requisitionItemMap.put(requisitionId, requisitionItemById);
+        }
+
+        return requisitionItemMap;
+    }
+
+
     @Transactional
-    public void createRequisitionItem(UUID requisitionId, UUID operatorId, List<RequisitionItemRequest> itemList, ZonedDateTime currentDateTime) {
+    public List<RequisitionItemEntity> createRequisitionItem(UUID requisitionId, UUID operatorId, List<RequisitionItemRequest> itemList, ZonedDateTime currentDateTime) {
         var requisitionItemEntityList = new ArrayList<RequisitionItemEntity>();
         itemList.forEach(item -> {
+            if (item.quantity() == 0) {
+                return;
+            }
+
             var requisitionItemEntity = populateRequisitionItemEntity(requisitionId, item, operatorId, currentDateTime);
             requisitionItemEntityList.add(requisitionItemEntity);
         });
-        requisitionItemRepository.saveAll(requisitionItemEntityList);
+        return requisitionItemRepository.saveAll(requisitionItemEntityList);
     }
 
     @Transactional
@@ -57,14 +79,14 @@ public class RequisitionItemService {
 
         // Process add new item when edit requisition
         updatedList.stream()
-            .filter(updated -> existingList.stream().noneMatch(existing -> existing.getItemId().equals(UUID.fromString(updated.itemId()))))
-            .forEach(item -> {
-                if (item.quantity() == 0) {
-                    return;
-                }
-                var requisitionItemEntity = populateRequisitionItemEntity(requisitionId, item, operatorId, currentDateTime);
-                existingList.add(requisitionItemEntity);
-            });
+                .filter(updated -> existingList.stream().noneMatch(existing -> existing.getItemId().equals(UUID.fromString(updated.itemId()))))
+                .forEach(item -> {
+                    if (item.quantity() == 0) {
+                        return;
+                    }
+                    var requisitionItemEntity = populateRequisitionItemEntity(requisitionId, item, operatorId, currentDateTime);
+                    existingList.add(requisitionItemEntity);
+                });
 
         requisitionItemRepository.saveAll(existingList);
         requisitionItemRepository.deleteByRequisitionId(requisitionId, deleteList);

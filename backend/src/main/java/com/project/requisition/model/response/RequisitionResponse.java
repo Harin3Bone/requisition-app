@@ -1,6 +1,5 @@
 package com.project.requisition.model.response;
 
-import com.project.requisition.constants.RequisitionStatus;
 import com.project.requisition.entity.RequisitionEntity;
 import com.project.requisition.entity.RequisitionItemEntity;
 
@@ -12,7 +11,7 @@ public record RequisitionResponse(
         UUID requisitionId,
         String subject,
         String description,
-        RequisitionStatus status,
+        String status,
         UUID requesterId,
         UUID teacherId,
         UUID adminId,
@@ -28,7 +27,7 @@ public record RequisitionResponse(
                 requisitionEntity.getRequisitionId(),
                 requisitionEntity.getSubject(),
                 requisitionEntity.getDescription(),
-                requisitionEntity.getStatus(),
+                requisitionEntity.getStatus().name(),
                 requisitionEntity.getRequesterId(),
                 requisitionEntity.getTeacherId(),
                 requisitionEntity.getAdminId(),

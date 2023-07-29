@@ -1,7 +1,7 @@
 package com.project.requisition.controller;
 
-import com.project.requisition.entity.RequisitionEntity;
 import com.project.requisition.model.request.RequisitionRequest;
+import com.project.requisition.model.response.RequisitionResponse;
 import com.project.requisition.service.RequisitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,25 +26,25 @@ public class RequisitionController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequisitionEntity> getRequisition() {
+    public List<RequisitionResponse> getRequisition() {
         return requisitionService.getAllRequisitions();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RequisitionEntity getRequisitionById(@PathVariable String id) {
+    public RequisitionResponse getRequisitionByIdResponse(@PathVariable String id) {
         return requisitionService.getRequisitionById(id);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public RequisitionEntity createRequisition(@RequestBody RequisitionRequest requisitionRequest) {
+    public RequisitionResponse createRequisition(@RequestBody RequisitionRequest requisitionRequest) {
         return requisitionService.createNewRequisition(requisitionRequest);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public RequisitionEntity updateRequisition(@PathVariable String id, @RequestBody RequisitionRequest requisitionRequest) {
+    public RequisitionResponse updateRequisition(@PathVariable String id, @RequestBody RequisitionRequest requisitionRequest) {
         return requisitionService.updateRequisition(id, requisitionRequest);
     }
 
