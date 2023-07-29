@@ -45,6 +45,7 @@ public class RequisitionService {
                 });
     }
 
+    @Transactional
     public RequisitionEntity createNewRequisition(RequisitionRequest requisitionRequest) {
         var requisitionId = UUID.randomUUID();
         var operatorId = UUID.fromString(requisitionRequest.lastOperatorId());
@@ -106,6 +107,7 @@ public class RequisitionService {
         return requisitionEntity;
     }
 
+    @Transactional
     public void deleteRequisition(String id) {
         var requisitionId = UUID.fromString(id);
         var requisitionEntity = requisitionRepository.findById(requisitionId)
