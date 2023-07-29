@@ -16,10 +16,10 @@ services:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "myuser" ]
+      test: [ "CMD", "pg_isready", "-d", "${POSTGRES_DB:-postgres}", "-U", "${POSTGRES_USER:-postgres}" ]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
 
 volumes:
   db-data:
