@@ -1,7 +1,7 @@
 package com.project.requisition.controller;
 
 import com.project.requisition.entity.RequisitionEntity;
-import com.project.requisition.model.RequisitionRequest;
+import com.project.requisition.model.request.RequisitionRequest;
 import com.project.requisition.service.RequisitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

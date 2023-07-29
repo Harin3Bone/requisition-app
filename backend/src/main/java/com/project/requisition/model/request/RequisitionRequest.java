@@ -1,4 +1,6 @@
-package com.project.requisition.model;
+package com.project.requisition.model.request;
+
+import java.util.List;
 
 public record RequisitionRequest(
         String subject,
@@ -7,5 +9,6 @@ public record RequisitionRequest(
         String requesterId,
         String teacherId,
         String adminId,
+        List<RequisitionItemRequest> itemList,
         String lastOperatorId
 ) {}
