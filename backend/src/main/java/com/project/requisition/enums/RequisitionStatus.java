@@ -1,4 +1,4 @@
-package com.project.requisition.constants;
+package com.project.requisition.enums;
 
 import lombok.Getter;
 

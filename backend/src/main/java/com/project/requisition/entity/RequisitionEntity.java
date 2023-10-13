@@ -1,6 +1,6 @@
 package com.project.requisition.entity;
 
-import com.project.requisition.constants.RequisitionStatus;
+import com.project.requisition.enums.RequisitionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

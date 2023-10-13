@@ -1,6 +1,6 @@
 package com.project.requisition.service;
 
-import com.project.requisition.constants.RequisitionStatus;
+import com.project.requisition.enums.RequisitionStatus;
 import com.project.requisition.entity.RequisitionEntity;
 import com.project.requisition.entity.RequisitionItemEntity;
 import com.project.requisition.exception.NotFoundException;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.project.requisition.constants.ErrorConstant.REQUISITION_NOT_FOUND;
+import static com.project.requisition.constants.ErrorMessage.REQUISITION_NOT_FOUND;
 
 @Slf4j
 @Service

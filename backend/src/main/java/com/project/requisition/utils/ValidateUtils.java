@@ -1,13 +1,13 @@
 package com.project.requisition.utils;
 
-import com.project.requisition.constants.RequisitionStatus;
+import com.project.requisition.enums.RequisitionStatus;
 import com.project.requisition.exception.InvalidException;
 import com.project.requisition.model.request.RequisitionRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.project.requisition.constants.ErrorConstant.INVALID_STATUS;
+import static com.project.requisition.constants.ErrorMessage.INVALID_STATUS;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
