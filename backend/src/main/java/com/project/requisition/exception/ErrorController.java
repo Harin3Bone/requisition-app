@@ -19,7 +19,6 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -57,7 +56,7 @@ public class ErrorController {
             BindException.class
     })
     @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
-    public ResponseEntity<Object> handleServletException(Exception e, WebRequest request) {
+    public ResponseEntity<Object> handleServletException(Exception e) {
         var response = new GenericResponse("Servlet Error", e.getMessage());
         return ResponseEntity.of(Optional.of(response));
     }

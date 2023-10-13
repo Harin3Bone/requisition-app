@@ -10,5 +10,5 @@ public enum RequisitionStatus {
     PENDING_2,
     APPROVE,
     REJECT,
-    CANCEL;
+    CANCEL
 }
